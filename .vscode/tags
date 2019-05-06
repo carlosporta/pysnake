@@ -1,0 +1,40 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	//
+DARK_GREY	../pysnake/main.py	/^DARK_GREY = (30, 30, 30)$/;"	kind:variable	line:16
+Direction	../pysnake/game.py	/^Direction = _direction()$/;"	kind:variable	line:126
+Food	../pysnake/game.py	/^Food = XY$/;"	kind:variable	line:116
+GameCanvas	../pysnake/main.py	/^class GameCanvas:$/;"	kind:class	line:10
+LIGHT_GREY	../pysnake/main.py	/^LIGHT_GREY = (140, 140, 140)$/;"	kind:variable	line:17
+RED	../pysnake/main.py	/^RED = (255, 0, 0)$/;"	kind:variable	line:19
+Snake	../pysnake/game.py	/^Snake = Iterable[XY]$/;"	kind:variable	line:115
+WHITE	../pysnake/main.py	/^WHITE = (255, 255, 255)$/;"	kind:variable	line:18
+XY	../pysnake/game.py	/^XY = Tuple[int, int]$/;"	kind:variable	line:114
+__init__.py	../pysnake/__init__.py	1;"	kind:file	line:1
+__init__.py	../tests/__init__.py	1;"	kind:file	line:1
+_add_element	../pysnake/cli.py	/^def _add_element(board, xy, symbol):$/;"	kind:function	line:21
+_add_elements	../pysnake/cli.py	/^def _add_elements(board, iterable, symbol):$/;"	kind:function	line:28
+_add_food	../pysnake/cli.py	/^def _add_food(board, food):$/;"	kind:function	line:36
+_add_snake	../pysnake/cli.py	/^def _add_snake(board, snake):$/;"	kind:function	line:40
+_clear_screen	../pysnake/cli.py	/^def _clear_screen():$/;"	kind:function	line:14
+_direction	../pysnake/game.py	/^class _direction(NamedTuple):$/;"	kind:class	line:119
+cli.py	../pysnake/cli.py	1;"	kind:file	line:1
+compose	../pysnake/cli.py	/^def compose(*functions):$/;"	kind:function	line:10
+draw	../pysnake/cli.py	/^def draw(board, points):$/;"	kind:function	line:50
+draw	../pysnake/main.py	/^def draw(game_canvas, game_state):$/;"	kind:function	line:60
+draw_game	../pysnake/main.py	/^def draw_game(game_screen: pygame.Surface, game_state: GameSate):$/;"	kind:function	line:48
+draw_info	../pysnake/main.py	/^def draw_info(screen, info, points):$/;"	kind:function	line:35
+fill	../pysnake/cli.py	/^def fill(board, food: Food, snake: Snake):$/;"	kind:function	line:44
+game.py	../pysnake/game.py	1;"	kind:file	line:1
+game_loop	../pysnake/main.py	/^def game_loop(game_canvas: GameCanvas, game_state: GameSate):$/;"	kind:function	line:68
+main	../pysnake/cli.py	/^def main():$/;"	kind:function	line:64
+main	../pysnake/main.py	/^def main():$/;"	kind:function	line:91
+main.py	../pysnake/main.py	1;"	kind:file	line:1
+move_snake	../pysnake/game.py	/^def move_snake(snake: Snake, direction: XY) -> Snake:$/;"	kind:function	line:129
+random_rgb	../pysnake/main.py	/^def random_rgb():$/;"	kind:function	line:22
+start_pygame	../pysnake/main.py	/^def start_pygame(size):$/;"	kind:function	line:26
+test_move_WEST	../tests/test_snake_actions.py	/^def test_move_WEST():$/;"	kind:function	line:4
+test_snake_actions.py	../tests/test_snake_actions.py	1;"	kind:file	line:1

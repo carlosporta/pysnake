@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/porta/.local/share/virtualenvs/pysnake-D7jhJ6ZS/bin/python",
+    "python.linting.pylamaEnabled": true,
+    "python.linting.enabled": true
+}
