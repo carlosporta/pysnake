@@ -18,8 +18,8 @@ class Font:
 def create_font(surface_size):
     w, h = surface_size
 
-SysFont(None, 20)
-SysFont(None, 13)
+# SysFont(None, 20)
+# SysFont(None, 13)
 
 
 @dataclass

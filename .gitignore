@@ -1,3 +1,5 @@
 .mypy_cache
+.pytest_cache
 .vscode
 monkeytype.sqlite3
+__pycache__

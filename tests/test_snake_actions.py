@@ -1,6 +1,7 @@
-from pysnake.game import move_snake, Direction
+from pysnake.game import move_snake, next_action, Direction
 
 
+# Moves
 def test_move_WEST() -> None:
     snake = [(1, 1)]
     snake = list(move_snake(snake, Direction.WEST))
@@ -96,3 +97,8 @@ def test_move_SOUTH() -> None:
                 (1, 2), (2, 2), (3, 2),
                                 (3, 3), (4, 3), (5, 3),
     ]
+
+
+# action
+def test_next_action():
+    action = next_action(snake, board, food, Direction.NORTH)
