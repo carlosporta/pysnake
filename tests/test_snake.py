@@ -57,30 +57,26 @@ def test_eat():
 def test_next_action_must_be_move():
     snake = ((1, 1),)
     food = (2, 1)
-    function, action = next_action(snake, food, Direction.WEST, (10, 10))
-    assert action == 'move'
-    assert function.__name__ == 'move'
+    action = next_action(snake, food, Direction.WEST, (10, 10))
+    assert action is 'move'
 
 
 def test_next_action_must_be_eat():
     snake = ((2, 1),)
     food = (2, 0)
-    function, action = next_action(snake, food, Direction.NORTH, (10, 10))
-    assert action == 'eat'
-    assert function.__name__ == 'eat'
+    action = next_action(snake, food, Direction.NORTH, (10, 10))
+    assert action is 'eat'
 
 
 def test_next_action_must_be_out_of_bounds():
     snake = ((2, 0),)
     food = (2, 2)
-    function, action = next_action(snake, food, Direction.NORTH, (10, 10))
-    assert action == 'out_of_bounds'
-    assert function is None
+    action = next_action(snake, food, Direction.NORTH, (10, 10))
+    assert action is 'out_of_bounds'
 
 
 def test_next_action_must_be_self_collision():
     snake = ((1, 0), (2, 0))
     food = (2, 3)
-    function, action = next_action(snake, food, Direction.EAST, (10, 10))
-    assert action == 'self_collision'
-    assert function is None
+    action = next_action(snake, food, Direction.EAST, (10, 10))
+    assert action is 'self_collision'

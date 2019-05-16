@@ -4,7 +4,7 @@ from threading import Thread
 
 from readchar import readchar
 
-from game import (next_action, random_game_state,
+from game import (calculate_new_XY, move, eat, next_action, random_game_state,
                   random_empty_xy, Direction, GameSate)
 
 
@@ -18,13 +18,14 @@ def draw(state: GameSate):
             else:
                 print('-', end='')
         print()
+    print(state.points)
 
 
 def draw_on_thread(stop_drawing, state):
     while not stop_drawing():
         system('cls')
         draw(state())
-        sleep(0.5)
+        sleep(0.1)
 
 
 def main():
@@ -49,21 +50,20 @@ def main():
         elif key is 'd':
             state.current_direction = Direction.EAST
 
-        function, action = next_action(state.snake,
-                                       state.food,
-                                       state.current_direction,
-                                       state.board)
+        action = next_action(state.snake,
+                             state.food,
+                             state.current_direction,
+                             state.board)
 
-        if function is not None:
-            state.snake = function(state.snake, state.current_direction)
-            if action is 'eat':
-                state.points += 1
-                state.food = random_empty_xy(state.board, snake=state.snake)
+        if action is 'eat':
+            eat_pos = calculate_new_XY(state.snake[0], state.current_direction)
+            state.snake = eat(state.snake, eat_pos)
+            state.points += 1
+            state.food = random_empty_xy(state.board, snake=state.snake)
+        elif action is 'move':
+            state.snake = move(state.snake, state.current_direction)
         else:
             stop_drawing = True
-
-        state = GameSate(state.board, 0, state.snake, state.food,
-                         state.current_direction)
 
 
 if __name__ == "__main__":

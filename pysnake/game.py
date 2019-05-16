@@ -58,13 +58,13 @@ def eat(snake: Snake, direction: XY) -> Snake:
 def next_action(snake: Snake, food: Food, moving_direction: XY, board: Board):
     next_move = calculate_new_XY(snake[0], moving_direction)
     if next_move == food:
-        return eat, 'eat'
+        return 'eat'
     elif is_out_of_bounds(next_move, board):
-        return None, 'out_of_bounds'
+        return 'out_of_bounds'
     elif next_move in snake:
-        return None, 'self_collision'
+        return 'self_collision'
     else:
-        return move, 'move'
+        return 'move'
 
 
 # XY calculcation
@@ -74,10 +74,9 @@ def calculate_new_XY(origen: XY, direction: XY) -> XY:
 
 # Board calculus
 def is_out_of_bounds(position: XY, board: Board):
-    # i is the lower bound = -1
-    # j is the x and y values
-    # k is the upper bound, rows and cols
-    return not(all(i < j < k for i, j, k in zip((-1, -1), position, board)))
+    x, y = position
+    rows, cols = board
+    return not(-1 < x < cols and -1 < y < rows)
 
 
 # Random board calculus
