@@ -1,79 +1,18 @@
-from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from random import randint, choice
-from typing import List, NamedTuple, Tuple, Union
+from typing import NamedTuple, Tuple
 
 
-# def random_direction():
-#     return choice(Direction)
-
-
-# def add_snake(game_state: GameSate, snake: Snake) -> GameSate:
-#     new_state = deepcopy(game_state)
-#     new_state.snake = snake
-#     return new_state
-
-
-# def add_food(game_state: GameSate, food: Food) -> GameSate:
-#     new_state = deepcopy(game_state)
-#     new_state.food = food
-#     return new_state
-
-
-# def add_direction(game_state: GameSate, direction: XY) -> GameSate:
-#     new_state = deepcopy(game_state)
-#     new_state.current_direction = direction
-#     return new_state
-
-
-# def keep_going(game_state: GameSate):
-#     return move(game_state, game_state.current_direction)
-
-
-# def random_xy(rows: int, cols: int) -> XY:
-#     return (randint(0, cols-1), randint(0, rows-1))
-
-
-# def move(game_state: GameSate, xy: XY):
-#     current_x, current_y = game_state.snake[0]
-#     new_x, new_y = xy
-#     new_xy = (current_x + new_x, current_y + new_y)
-
-#     new_state = deepcopy(game_state)
-#     new_state.snake.pop(-1)
-#     new_state.snake.insert(0, new_xy)
-
-#     return new_state
-
-
-# def is_out_of_bounds(game_state: GameSate):
-#     x, y = game_state.snake[0]
-#     rows, cols = game_state.rows, game_state.cols
-#     return x >= cols or x < 0 or y >= rows or y < 0
-
-
-# def eat(game_state: GameSate, xy: XY):
-#     new_state = deepcopy(game_state)
-#     new_state.snake.insert(0, xy)
-#     return new_state
-
-
-# data types
+# Data types
 XY = Tuple[int, int]
-Snake = Union[Tuple[XY, ...], List[XY]]
+Snake = Tuple[XY, ...]
 Food = XY
+Rows = int
+Cols = int
+Board = (Rows, Cols)
 
 
-@dataclass
-class GameSate:
-    rows: int
-    cols: int
-    snake: Union[Snake, List]
-    food: Union[Food, Tuple, List]
-    points: int
-    current_direction: Union[XY, Tuple, List]
-
-
+# Possible directions
 class _direction(NamedTuple):
     NORTH: XY = (0, -1)
     SOUTH: XY = (0, 1)
@@ -84,45 +23,76 @@ class _direction(NamedTuple):
 Direction = _direction()
 
 
-def random_game_state(rows: int, cols: int) -> GameSate:
-    game_state = empty_game_state(rows, cols)
-    # # snake = init_snake(random_empty_xy(game_state))
-    # game_state = add_snake(game_state, snake)
-    # food = init_food(random_empty_xy(game_state))
-    # game_state = add_food(game_state, food)
-    # direction = random_direction()
-    # game_state = add_direction(game_state, direction)
-    return game_state
+def random_direction():
+    return choice(Direction)
 
 
-# def random_empty_xy(game_state: GameSate) -> XY:
-#     while True:
-#         xy = random_xy(game_state.rows, game_state.cols)
-#         if xy == game_state.food or xy not in game_state.snake:
-#             return xy
+@dataclass
+class GameSate:
+    board: Board
+    points: int
+    snake: Snake
+    food: Food
+    current_direction: XY
 
 
-# def init_snake(xy: XY) -> Snake:
-#     return [xy]
+def random_game_state(board: Board) -> GameSate:
+    snake = (random_empty_xy(board),)
+    food = random_empty_xy(board, snake=snake)
+    direction = random_direction()
+    points = 0
+    return GameSate(board, points, snake, food, direction)
 
 
-# def init_food(xy: XY) -> Food:
-#     return xy
+# Snake actions
+def move(snake: Snake, direction: XY) -> Snake:
+    new_head = calculate_new_XY(snake[0], direction)
+    new_tail = snake[:-1]
+    return (new_head,) + new_tail
 
 
-def empty_game_state(rows: int, cols: int) -> GameSate:
-    return GameSate(rows, cols, [[]], [], 0, [])
+def eat(snake: Snake, direction: XY) -> Snake:
+    return (direction,) + snake
 
 
-def _move(origen: XY, destiny: XY) -> XY:
-    return tuple(sum(i) for i in zip(origen, destiny))
+def next_action(snake: Snake, food: Food, moving_direction: XY, board: Board):
+    next_move = calculate_new_XY(snake[0], moving_direction)
+    if next_move == food:
+        return eat, 'eat'
+    elif is_out_of_bounds(next_move, board):
+        return None, 'out_of_bounds'
+    elif next_move in snake:
+        return None, 'self_collision'
+    else:
+        return move, 'move'
 
 
-def _get_snake_head(snake: Snake) -> XY:
-    return snake[0]
+# XY calculcation
+def calculate_new_XY(origen: XY, direction: XY) -> XY:
+    return tuple(sum(i) for i in zip(origen, direction))
 
 
-def move_snake(snake: Snake, direction: XY) -> Snake:
-    old_head = _get_snake_head(snake)
-    new_head = _move(old_head, direction)
-    return tuple([new_head]) + tuple(snake[:-1])
+# Board calculus
+def is_out_of_bounds(position: XY, board: Board):
+    # i is the lower bound = -1
+    # j is the x and y values
+    # k is the upper bound, rows and cols
+    return not(all(i < j < k for i, j, k in zip((-1, -1), position, board)))
+
+
+# Random board calculus
+def random_xy(board: Board) -> XY:
+    return (randint(0, board[1] - 1), randint(0, board[0] - 1))
+
+
+def random_empty_xy(board: Board,
+                    snake: Snake = [],
+                    food: Food = []) -> XY:
+    if len(snake) == board[0] * board[1]:
+        return None
+
+    # TODO refactor
+    while True:
+        xy = random_xy(board)
+        if xy == food or xy not in snake:
+            return xy

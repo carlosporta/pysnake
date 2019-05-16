@@ -12,6 +12,7 @@ mypy = "*"
 [packages]
 pygame = "*"
 readchar = "*"
+twilio = "*"
 
 [requires]
 python_version = "3.7"
