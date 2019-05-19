@@ -1,97 +1,136 @@
+from copy import deepcopy
 from dataclasses import dataclass
-from random import randint, choice
-from typing import NamedTuple, Tuple
-
+from functools import wraps
+from itertools import product
+from random import choice
+from typing import Tuple, NamedTuple, Callable, Any
 
 # Data types
-XY = Tuple[int, int]
-Snake = Tuple[XY, ...]
-Food = XY
-Rows = int
-Cols = int
-Board = (Rows, Cols)
+IJ = Tuple[int, int]
+Food = IJ
+
+
+@dataclass
+class Snake:
+    body: Tuple[IJ, ...]
+    direction: IJ
+
+
+@dataclass
+class State:
+    rows: int
+    cols: int
+    points: int
+    snake: Snake
+    food: Food
 
 
 # Possible directions
 class _direction(NamedTuple):
-    NORTH: XY = (0, -1)
-    SOUTH: XY = (0, 1)
-    WEST: XY = (-1, 0)
-    EAST: XY = (1, 0)
+    NORTH: IJ = (-1, 0)
+    SOUTH: IJ = (1, 0)
+    WEST: IJ = (0, -1)
+    EAST: IJ = (0, 1)
 
 
-Direction = _direction()
+Directions = _direction()
 
 
 def random_direction():
-    return choice(Direction)
+    return choice(Directions)
 
 
-@dataclass
-class GameSate:
-    board: Board
-    points: int
-    snake: Snake
-    food: Food
-    current_direction: XY
+# Helpers
+def deepcopy_params(f: Callable) -> Any:
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return f(*(deepcopy(x) for x in args),
+                 **{k: deepcopy(v) for k, v in kwargs.items()})
+    return wrapper
 
 
-def random_game_state(board: Board) -> GameSate:
-    snake = (random_empty_xy(board),)
-    food = random_empty_xy(board, snake=snake)
-    direction = random_direction()
-    points = 0
-    return GameSate(board, points, snake, food, direction)
+# State
+def initial_state(rows: int, cols: int) -> State:
+    snake = Snake(((0, 0),), Directions.EAST)
+    return State(rows, cols, 0, snake, (0, 0))
 
 
-# Snake actions
-def move(snake: Snake, direction: XY) -> Snake:
-    new_head = calculate_new_XY(snake[0], direction)
-    new_tail = snake[:-1]
-    return (new_head,) + new_tail
+def random_state(rows: int, cols: int) -> State:
+    state = initial_state(rows, cols)
+    state.snake = Snake((random_empty_IJ(state),), random_direction())
+    state.food = random_empty_IJ(state)
+    return state
 
 
-def eat(snake: Snake, direction: XY) -> Snake:
-    return (direction,) + snake
+# Position
+def free_positions(state: State) -> set:
+    positions = product(range(state.rows), range(state.cols))
+    free_options = set(positions) - set(state.snake.body) - set([state.food])
+    return free_options
 
 
-def next_action(snake: Snake, food: Food, moving_direction: XY, board: Board):
-    next_move = calculate_new_XY(snake[0], moving_direction)
-    if next_move == food:
-        return 'eat'
-    elif is_out_of_bounds(next_move, board):
-        return 'out_of_bounds'
-    elif next_move in snake:
-        return 'self_collision'
-    else:
-        return 'move'
+def random_empty_IJ(state: State) -> IJ:
+    return choice(list(free_positions(state)))
 
 
-# XY calculcation
-def calculate_new_XY(origen: XY, direction: XY) -> XY:
+def calculate_new_IJ(origen: IJ, direction: IJ) -> IJ:
     return tuple(sum(i) for i in zip(origen, direction))
 
 
-# Board calculus
-def is_out_of_bounds(position: XY, board: Board):
-    x, y = position
-    rows, cols = board
-    return not(-1 < x < cols and -1 < y < rows)
+def is_out_of_bounds(ij: IJ, state: State) -> bool:
+    i, j = ij
+    return not(-1 < i < state.rows and -1 < j < state.cols)
 
 
-# Random board calculus
-def random_xy(board: Board) -> XY:
-    return (randint(0, board[1] - 1), randint(0, board[0] - 1))
+# Snake
+def snake_head(state: State) -> IJ:
+    return state.snake.body[0]
 
 
-def random_empty_xy(board: Board,
-                    snake: Snake = [],
-                    food: Food = []) -> XY:
-    if len(snake) == board[0] * board[1]:
+def snake_direction(state: State) -> IJ:
+    return state.snake.direction
+
+
+@deepcopy_params
+def change_snake_direction(direction: IJ, state: State) -> State:
+    state.snake.direction = direction
+    return state
+
+
+def next_snake_head(state: State) -> IJ:
+    return calculate_new_IJ(snake_head(state), snake_direction(state))
+
+
+def next_snake_tail(state: State) -> Tuple[IJ, ...]:
+    return state.snake.body[:-1]
+
+
+def next_snake(state: State) -> Snake:
+    body = (next_snake_head(state),) + next_snake_tail(state)
+    direction = state.snake.direction
+    return Snake(body, direction)
+
+
+@deepcopy_params
+def move_snake(state: State) -> State:
+    state.snake = next_snake(state)
+    return state
+
+
+@deepcopy_params
+def eat(state: State) -> State:
+    state.snake.body = (state.food,) + state.snake.body
+    state.points += 1
+    state.food = random_empty_IJ(state)
+    return state
+
+
+@deepcopy_params
+def next_state(state: State) -> State:
+    head = next_snake_head(state)
+    if state.food == head:
+        return eat(state)
+    elif is_out_of_bounds(head, state) or head in state.snake.body:
         return None
-
-    # TODO refactor
-    while True:
-        xy = random_xy(board)
-        if xy == food or xy not in snake:
-            return xy
+    else:
+        return move_snake(state)
