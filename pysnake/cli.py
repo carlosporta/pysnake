@@ -1,4 +1,4 @@
-from os import system
+from os import system, name
 
 from readchar import readchar
 
@@ -6,8 +6,24 @@ from game import (change_snake_direction, Directions,
                   next_state, random_state, State)
 
 
+def _clear():
+    def win_cls():
+        system('cls')
+
+    def posix_clear():
+        system('clear')
+
+    if name is 'nt':
+        return win_cls
+    else:
+        return posix_clear
+
+
+clear = _clear()
+
+
 def draw(state: State) -> None:
-    system('clear')
+    clear()
     for i in range(state.rows):
         for j in range(state.cols):
             if (i, j) in state.snake.body:
@@ -20,7 +36,7 @@ def draw(state: State) -> None:
 
 
 def main():
-    state = random_state(6, 10)
+    state = random_state(2, 2)
     key = ''
     while state and key != 'q':
         draw(state)

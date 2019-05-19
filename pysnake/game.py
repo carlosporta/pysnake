@@ -70,7 +70,10 @@ def free_positions(state: State) -> set:
 
 
 def random_empty_IJ(state: State) -> IJ:
-    return choice(list(free_positions(state)))
+    positions = list(free_positions(state))
+    if len(positions) > 0:
+        return choice(positions)
+    return None
 
 
 def calculate_new_IJ(origen: IJ, direction: IJ) -> IJ:
@@ -87,8 +90,19 @@ def snake_head(state: State) -> IJ:
     return state.snake.body[0]
 
 
+def snake_tail(state: State) -> Tuple[IJ, ...]:
+    return state.snake.body[1:]
+
+
 def snake_direction(state: State) -> IJ:
     return state.snake.direction
+
+
+def self_collision(state: State, position: IJ) -> bool:
+    if len(state.snake.body) > 2:
+        return position in snake_tail(state)[:-1]
+    else:
+        return position in snake_tail(state)
 
 
 @deepcopy_params
@@ -130,7 +144,7 @@ def next_state(state: State) -> State:
     head = next_snake_head(state)
     if state.food == head:
         return eat(state)
-    elif is_out_of_bounds(head, state) or head in state.snake.body[:-1]:
+    elif is_out_of_bounds(head, state) or self_collision(state, head):
         return None
     else:
         return move_snake(state)

@@ -171,3 +171,7 @@ def test_next_move_is_the_snake_tail():
 
     state = game.next_state(state)
     assert state.snake.body == ((1, 0), (0, 0), (0, 1), (1, 1))
+
+    state.snake.body = ((0, 0), (1, 0))
+    state = game.next_state(state)
+    assert state is None
