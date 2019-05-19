@@ -32,7 +32,7 @@ def draw(state: State) -> None:
             if (i, j) == snake_head(state):
                 print('@', end='')
             elif (len(snake_tail(state)) > 0 and
-                 (i, j) == snake_tail(state)[-1]):
+                  (i, j) == snake_tail(state)[-1]):
                 print('-', end='')
             elif (i, j) in state.snake.body:
                 print('#', end='')

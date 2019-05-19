@@ -7,7 +7,9 @@ def test_free_positions():
     state = game.initial_state(3, 3)
     state.snake.body = ((0, 0), (0, 1), (0, 2), (1, 2))
     state.food = (1, 0)
-    assert sorted(game.free_positions(state)) == sorted(((1, 1), (2, 0), (2, 1), (2, 2)))
+
+    positions = sorted(game.free_positions(state))
+    assert positions == sorted(((1, 1), (2, 0), (2, 1), (2, 2)))
 
 
 def test_calculate_new_IJ():
