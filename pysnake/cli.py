@@ -45,8 +45,8 @@ def draw(state: State) -> None:
 
 
 def main():
-    rows = 2
-    cols = 3
+    rows = 6
+    cols = 10
     state = random_state(rows, cols)
     draw(state)
     key = ''
