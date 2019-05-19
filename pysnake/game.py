@@ -130,7 +130,7 @@ def next_state(state: State) -> State:
     head = next_snake_head(state)
     if state.food == head:
         return eat(state)
-    elif is_out_of_bounds(head, state) or head in state.snake.body:
+    elif is_out_of_bounds(head, state) or head in state.snake.body[:-1]:
         return None
     else:
         return move_snake(state)

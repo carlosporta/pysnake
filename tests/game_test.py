@@ -161,3 +161,13 @@ def test_next_state():
 
     state.snake.direction = game.Directions.WEST
     assert game.next_state(state) is None
+
+
+def test_next_move_is_the_snake_tail():
+    state = game.initial_state(6, 7)
+    state.food = (3, 3)
+    state.snake.direction = game.Directions.SOUTH
+    state.snake.body = ((0, 0), (0, 1), (1, 1), (1, 0))
+
+    state = game.next_state(state)
+    assert state.snake.body == ((1, 0), (0, 0), (0, 1), (1, 1))
