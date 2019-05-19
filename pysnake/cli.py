@@ -2,7 +2,7 @@ from os import system
 
 from readchar import readchar
 
-from func import (change_snake_direction, Directions,
+from game import (change_snake_direction, Directions,
                   next_state, random_state, State)
 
 
